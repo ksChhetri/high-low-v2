@@ -74,20 +74,23 @@ window.App = {
         },
         broker: function() {
           var self = this;
-     
-          var meta;
+
           _contracInstance.check_broker.sendTransaction({from: account},
             function(err,value) {
               if(err){
-                console.log(value);
+                console.log(err);
               }
-              else if(value==true)
+              if(value==true)
               {
                 $("#user_page").hide();
                 $("#broker_page").show();
               }
               else{        
-            _contracInstance.length_of_broker_addresses.sendTransaction(function(val){
+            _contracInstance.length_of_broker_addresses.sendTransaction(function(error,val){
+              if(error){
+                console.log("error inside broker method ",error);
+                return;
+              }
               if(val<5)
               {
                 var txt;
