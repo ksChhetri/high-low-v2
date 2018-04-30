@@ -35,7 +35,7 @@ var passtime;
 window.App = {
   start: function() {
     var self = this;
-    console.log("inside aapp ");
+    console.log("inside app  ");
     // Bootstrap the MetaCoin abstraction for Use.
     //MetaCoin.setProvider(web3.currentProvider);
 
@@ -53,13 +53,13 @@ window.App = {
 
       accounts = accs;
       account = accounts[0];
-    //   self.broker_list();
-    //   self.totalbroker_list();
-    //   self.sri();
+      self.broker_list();
+      self.totalbroker_list();
+      self.sri();
       self.basicfunctions();
-    //   self.user_table();
-    //   self.tokenvalue();  
-    // //  self.refreshBalance();
+      self.user_table();
+      self.tokenvalue();  
+    //  self.refreshBalance();
     });
   },
   user: function() {
@@ -72,29 +72,28 @@ window.App = {
        $("#user_page").show();
          $("#broker_page").hide();
         },
-        broker: function() {
+        /*broker: function() {
           var self = this;
-
+          $("#user_page").hide();
+          $("#broker_page").show();
+            },*/
+      broker: function() {
+          var self = this;
+     
+          var meta;
           _contracInstance.check_broker.sendTransaction({from: account},
-            function(err,value) {
-              console.log("err   ",err);
-              console.log("value   ",value);
-              if(err){
-                console.log(err);
-              }
-              if(value)
-              {
-                console.log("value inside   ",value);
-                $("#user_page").hide();
-                $("#broker_page").show();
-              }
-              else{
-                console.log("value inside 2  ",value);
-              _contracInstance.length_of_broker_addresses.sendTransaction(function(error,val){
-              if(error){
-                console.log("error inside broker method ",error);
-                return;
-              }
+            function(value) {
+            console.log(value);
+           if(value==true)
+           {
+            
+            $("#user_page").hide();
+            $("#broker_page").show();
+           }
+           else
+           {
+           
+            meta.length_of_broker_addresses.sendTransaction(function(val){
               if(val<5)
               {
                 var txt;
@@ -102,92 +101,24 @@ window.App = {
                 if (r == true) {
                 App.addbroker();
                 } 
-            }});
+            }})
            }
+          }).catch(function(e) {
+            console.log(e);
+           
           });
         },
-        /*broker: function() {
+        addbroker: function() {
           var self = this;
-          $("#user_page").hide();
-          $("#broker_page").show();
-            },*/
-//       broker: function() {
-//         var self = this;
-//         _contracInstance.check_broker.sendTransaction({ from: web3.eth.accounts[0]},
-//           function (err, result){
-//             console.log(err);
-//             console.log(result);
-
-//             if (err) {
-//               console.log(err);
-//               return;
-//             }
-//             if(value==true)
-//            {
-            
-//             $("#user_page").hide();
-//             $("#broker_page").show();
-//            }
-//            else
-//            {
-//             _contracInstance.length_of_broker_addresses.sendTransaction(function(error, val){
-//               if(error){
-//                 return ;
-//               }
-//                   else if(val<5)
-//                   {
-//                     var txt;
-//                     var r = confirm("Do you want to join as a broker?");
-//                     if (r == true) {
-//                     App.addbroker();
-//                     }
-//                 }})
-//            }
-// });
-//           // var self = this;    
-//           // //console.log(value,"---");      
-//           // _contracInstance.check_broker.sendTransaction({ from: web3.eth.accounts[0]},
-//           //   function (value){
-//           //   console.log(value,"---");
-//           //  if(value==true)
-//           //  {
-            
-//           //   $("#user_page").hide();
-//           //   $("#broker_page").show();
-//           //  }
-//           //  else
-//           //  {
-           
-//           //   _contracInstance.length_of_broker_addresses.sendTransaction(function(val){
-//           //     if(val<5)
-//           //     {
-//           //       var txt;
-//           //       var r = confirm("Do you want to join as a broker?");
-//           //       if (r == true) {
-//           //       App.addbroker();
-//           //       } 
-//           //   }})
-//           //  }
-//           // })
-//           // .catch(function(e) {
-//           //   console.log(e);
-           
-//           // });
-//         },
-//         addbroker: function() {
-//           var self = this;
       
-//           var meta;
-//           _contracInstance.add_broker.sendTransaction({from: account,gas: 6000000},
-//             function(err,result){
-//             if(result){
-//               console.log();
-//             }
-//           }).catch(function(err) {
-//             console.log(e);
-//             self.setStatus("Error getting balance; see log.");
-//           });
-//         },
+          _contracInstance.add_broker.sendTransaction({from: account,gas: 6000000},
+            function(value) {
+          
+          }).catch(function(e) {
+            console.log(e);
+            self.setStatus("Error getting balance; see log.");
+          });
+        },
 
   basicfunctions : function(){
     $("#account").val(account)
@@ -202,18 +133,16 @@ window.App = {
   tokenvalue: function() {
     var self = this;
 
-    var meta;
     _contracInstance.balanceOf.sendTransaction(account, {from: account},
-      function(value,error) {
-        if(error){
-          console.log("brokertoken error  ",error);
-          return ;
-        }
-        else{
-          console.log("brokertoken value  ",value);
-          $("#usertoken").val(web3.fromWei(value, 'ether'))
-          $("#brokertoken").val(web3.fromWei(value, 'ether'))
-        }
+        function(error,value) {
+      if(error){
+        console.log("balanceOf ",error);
+        return;
+      }
+      else{
+        $("#usertoken").val(web3.fromWei(value, 'ether'))
+        $("#brokertoken").val(web3.fromWei(value, 'ether'))
+      }
     })
   },
   user_table : function() {
@@ -223,23 +152,17 @@ window.App = {
     date = parseInt(Math.round(new Date(date))/1000.0);
     $("#user_table").html('')
      _contracInstance.get_better_betted_bets_length.sendTransaction({from: account},
-      function(error,val1) {
-      if(error){
-         console.log("#user_table  ",error);
-         return;
-       }
-      else{
-      //for(var i=0;i<val1.toNumber();i++)
-      for(var i=0;i<val1;i++)
+        function(val1) {
+      for(var i=0;i<val1.toNumber();i++)
       {
-        _contracInstance.better_betted_bets.sendTransaction(account,i,function(val2){
-          _contracInstance.bet_creator.sendTransaction(val2,function(val3){ 
-            _contracInstance.index_of_broker_bet.sendTransaction(val2,function(val4,err){
-              _contracInstance.bet_details_map.sendTransaction(val3,val4,function(data,err){
-                _contracInstance.bet_status_map.sendTransaction(data[0],function(data1,err){
-                  _contracInstance.game_id_map_better.sendTransaction(account,data[0],function(data2,err){
-                    _contracInstance.high_betters.sendTransaction(data[0],function(data3,err){
-                      _contracInstance.low_betters.sendTransaction(data[0],function(data4,err){
+        meta.better_betted_bets(account,i).then(function(val2){
+        meta.bet_creator(val2).then(function(val3){ 
+      meta. index_of_broker_bet(val2).then(function(val4,err){
+        meta.bet_details_map(val3,val4).then(function(data,err){
+          meta.bet_status_map(data[0]).then(function(data1,err){
+            meta. game_id_map_better(account,data[0]).then(function(data2,err){
+              meta. high_betters(data[0]).then(function(data3,err){
+                meta.low_betters(data[0]).then(function(data4,err){
             var a=parseInt(data1[2]);
             if(data2[1]>0)
           {
@@ -463,10 +386,11 @@ window.App = {
     });
           });
         
-        });
       });
     });
-    }}  
+  });
+    }
+  
     });
   },
   totalbroker_list:function(){
@@ -475,26 +399,19 @@ window.App = {
     var date=new Date().toLocaleString();
     date = parseInt(Math.round(new Date(date))/1000.0);
     $("#broker_list").html('')
-     _contracInstance.length_of_broker_addresses.sendTransaction(function(error,val1) {
-       if(error){
-         console.log("#broker_list  ",error);
-         return;
-       }
-       else{
-       var x=val1;
-       console.log(x,"...xxx....")
-       for(var a=0;a<x;a++){
-        _contracInstance.get_broker_address.sendTransaction(a,
-          function(val2){
-                _contracInstance.broker_created_bets.sendTransaction(val2).then(function(val,err){
-       for(var i=val;i>=1;i--)
+     _contracInstance.length_of_broker_addresses.sendTransaction(function(val1) {
+      for(var a=0;a<val1.toNumber();a++)
+      {
+        meta.get_broker_address(a).then(function(val2){
+      meta. broker_created_bets(val2).then(function(val,err){
+       for(var i=val.toNumber();i>=1;i--)
        {
-        _contracInstance.bet_details_map.sendTransaction(val2,i,function(data,err){
-          _contracInstance.bet_status_map.sendTransaction(data[0],function(data1,err){
-            _contracInstance.high_betters.sendTransaction(data[0],function(data3,err){
-              _contracInstance.low_betters.sendTransaction(data[0],function(data4,err){
-                _contracInstance.game_id_map_better.sendTransaction(account,data[0],function(data2,err){
-                  _contracInstance.is_exit.sendTransaction(account,data[0],function(data5,err){
+        meta.bet_details_map(val2,i).then(function(data,err){
+          meta.bet_status_map(data[0]).then(function(data1,err){
+            meta. high_betters(data[0]).then(function(data3,err){
+              meta.low_betters(data[0]).then(function(data4,err){
+                meta. game_id_map_better(account,data[0]).then(function(data2,err){
+                  meta.is_exit(account,data[0]).then(function(data5,err){
             var a=parseInt(data1[2]);
             if(data2[1]>0)
             {
@@ -893,7 +810,6 @@ window.App = {
       });
     });
     }
-  }
     });
   },
   pval:function (pass,time)
@@ -913,14 +829,13 @@ window.App = {
   var bettokeninwei = document.getElementById('incbet').value*0.001;
   var date=new Date().toLocaleString();
   date = parseInt(Math.round(new Date(date))/1000.0);
-      var meta;
       _contracInstance.balanceOf.sendTransaction(account,{from:account,gas: 6000000 },
         function(val) {
         if(bettime<=date)
         {
         if(val>bettokeninwei)
         {
-          _contracInstance.betting.sendTransaction(betid,choice,web3.toWei(bettokeninwei, 'ether'),{from:account,gas: 6000000 },function(data2,err){
+        meta. betting(betid,choice,web3.toWei(bettokeninwei, 'ether'),{from:account,gas: 6000000 }).then(function(data2,err){
         })
       }
       else{
@@ -944,7 +859,7 @@ window.App = {
   var betid = parseInt(passvalue);
   var incresetoken = document.getElementById('onlynum').value*0.001;
     _contracInstance.game_id_map_better.sendTransaction(account,betid,
-      function(data1) {
+        function(data1) {
       $("#incbet").val(web3.fromWei(data1[1]*1000, 'ether'))
       _contracInstance.better_increase_bet_tokens.sendTransaction(betid, web3.toWei(incresetoken, 'ether'),{from:account,gas: 6000000 });
     }).catch(function(e) {
@@ -956,8 +871,8 @@ window.App = {
   better_exit_bet : function() {
     var self = this;
   var betid = parseInt(passvalue);
-    _contracInstance.better_exit_bet.sendTransaction(betid,{from:account,gas: 4653035},
-      function() {
+    _contracInstance.better_exit_bet.sendTransaction(betid,{from:account,gas: 6000000},
+        function() {
       
     }).catch(function(e) {
       console.log(e);
@@ -969,33 +884,25 @@ window.App = {
     var self = this;
     var meta;
     var num1 = parseFloat(document.getElementById('num').value)*0.001;
-    _contracInstance.buy_token.sendTransaction({from:account,value: web3.toWei(num1,'ether'),gas: 4653035},
-    function(err) {
-      if(err){
-        console.log("buy_token.sendTransaction   :::",err);
-        return;
-      }
-    })
-    // .catch(function(e) {
-    //   console.log(e);
+    _contracInstance.buy_token.sendTransaction({from:account,value: web3.toWei(num1,'ether'),gas: 6000000},
+    function() {
+      
+    }).catch(function(e) {
+      console.log(e);
      
-    // });
+    });
   },
   // sell token
    exchange_token : function() {
     var self = this;
   var covertTokentoEther = parseFloat(document.getElementById('selltk').value) *0.001;
     _contracInstance.exchange_token.sendTransaction( web3.toWei(covertTokentoEther),{from:account,gas: 6000000},
-    function(err) {
-      if(err){
-        console.log("error in converting  ",e);
-        return;
-      }      
-    })
-    // .catch(function(e) {
-    //   console.log(e);
+    function() {
+      
+    }).catch(function(e) {
+      console.log(e);
      
-    // });
+    });
   },
   myFunction: function(m) {
     document.getElementById("a").disabled = true;
@@ -1023,14 +930,15 @@ document.getElementById("button1").disabled = true;
     date = parseInt(Math.round(new Date(date))/1000.0);
     $("#broker_list").html('')
      _contracInstance.broker_created_bets.sendTransaction(account,
-      function(error,val) {
-        if(error){
-          console.log("#broker_list  ",error );
-          return;
+        function(error,val) {
+       if(error){
+           console.log("broker_created_bets  ",error);
+           return;
         }
-        else{
-        for(var i=val;i>=1;i--)
-        {
+       else{
+      //  for(var i=val.toNumber();i>=1;i--)
+      for(var i=val;i>=1;i--)
+       {
         _contracInstance.bet_details_map.sendTransaction(account,i,function(data,err){
           _contracInstance.bet_status_map.sendTransaction(data[0],function(data1,err){
             _contracInstance.high_betters.sendTransaction(data[0],function(data3,err){
@@ -1228,7 +1136,7 @@ sri:function()
     var self = this;
 
     _contracInstance.broker_stop_bet.sendTransaction(stopbetid, {from: account,gas: 6000000},
-      function(value) {
+        function(value) {
      
     }).catch(function(e) {
       console.log(e);
@@ -1240,7 +1148,7 @@ sri:function()
     var self = this;
     var result=  parseInt($("input[name='gender']:checked").val().trim());
     _contracInstance.broker_setting_result_and_distribute_money.sendTransaction(declarebetid, result, {from: account,gas: 6000000},
-      function(value) {
+        function(value) {
      
     }).catch(function(e) {
       console.log(e);
@@ -1257,7 +1165,7 @@ sri:function()
     var etime1 = $("#edate1").val();
     etime1 = parseInt(Math.round(new Date(etime1))/1000.0);
     _contracInstance.broker_set_game.sendTransaction(teamA,teamB,select,etime,etime1,{from: account,gas: 6000000},
-      function() {
+        function() {
       
     }).catch(function(e) {
       console.log(e);
