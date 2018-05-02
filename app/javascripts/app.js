@@ -53,12 +53,12 @@ window.App = {
 
       accounts = accs;
       account = accounts[0];
-    //   self.broker_list();
+    //  self.broker_list();
     //   self.totalbroker_list();
     //   self.sri();
       self.basicfunctions();
     //   self.user_table();
-    //   self.tokenvalue();  
+      // self.tokenvalue();  
     // //  self.refreshBalance();
     });
   },
